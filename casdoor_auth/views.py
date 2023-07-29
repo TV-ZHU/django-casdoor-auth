@@ -46,9 +46,11 @@ def callback(request):
     request.session['user'] = user
     try:
         in_user = User.objects.get(username=user.get('name'))
+        in_user.set_password(user.get('password'))
+        in_user.save()
     except:
         in_user = User.objects.create_user(user.get('name'), user.get('email'), user.get('password'))
         in_user.save()
-    in_user = authenticate(username=user.get('name'), password=user.get('password'))
+    in_user = authenticate(username=user.get('name'), password=user.get('password'), backend='django.contrib.auth.backends.ModelBackend')
     login(request, in_user)
     return redirect(settings.LOGIN_REDIRECT_URL)
